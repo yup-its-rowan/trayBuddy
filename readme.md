@@ -1,0 +1,1 @@
+This is a little program I keep running to help automate tasks I do a lot. Plans to interface this with hardware optimizations and side projects as I work on those.
