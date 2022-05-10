@@ -3,8 +3,8 @@ package com.company;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -14,8 +14,15 @@ public class Main {
         if (!SystemTray.isSupported()) {
             System.out.println("SystemTray is not supported");
             return;
+        } //"src/com/company/images/icon.png"
+        //System.out.println("Working Directory = " + System.getProperty("user.dir"));
+        //Image image = ImageIO.read(new File("images/icon.png"));
+
+        InputStream inputStream = Main.class.getResourceAsStream("/icon.png");
+        if (inputStream == null){
+            return;
         }
-        Image image = ImageIO.read(new File("src/com/company/icon.png"));
+        Image image = ImageIO.read(inputStream);
         final PopupMenu popup = new PopupMenu();
         final TrayIcon trayIcon = new TrayIcon(image);
         final SystemTray tray = SystemTray.getSystemTray();
