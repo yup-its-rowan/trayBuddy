@@ -8,6 +8,8 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import static com.company.PiBoard.PiBoardSingleton;
+
 public class Main {
 
     public static void main(String[] args) throws IOException {
@@ -33,7 +35,8 @@ public class Main {
         //MenuItem aboutItem = new MenuItem("About");
         //CheckboxMenuItem cb1 = new CheckboxMenuItem("Set auto size");
         //CheckboxMenuItem cb2 = new CheckboxMenuItem("Set tooltip");
-        Menu shortcutsMenu = new Menu("Shortcuts");
+        MenuItem piBoardItem = new MenuItem("PiBoard");
+        Menu shortcutsMenu = new Menu("Shortcuts9");
             MenuItem emailItem = new MenuItem("Email");
             MenuItem schoolItem = new MenuItem("School");
             MenuItem tf2Item = new MenuItem("TF2");
@@ -82,12 +85,19 @@ public class Main {
         };
         tf2Item.addActionListener(tf2Listener);
 
+        ActionListener piBoardItemListener = e -> {
+            PiBoardSingleton.show();
+        };
+
+        piBoardItem.addActionListener(piBoardItemListener);
+
         //Add components to pop-up menu
         //popup.add(aboutItem);
         //popup.addSeparator();
         //popup.add(cb1);
         //popup.add(cb2);
         //popup.addSeparator();
+        popup.add(piBoardItem);
         popup.add(shortcutsMenu);
         shortcutsMenu.add(emailItem);
         shortcutsMenu.add(schoolItem);
