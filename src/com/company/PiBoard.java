@@ -14,34 +14,31 @@ public class PiBoard {
     public static PiBoard PiBoardSingleton = new PiBoard();
 
     JFrame frame = new JFrame();
-    JLabel label = new JLabel("Hey");
     JPanel boardOnlinePanel = new JPanel();
     JPanel serverOnlinePanel = new JPanel();
-    JPanel offPanel = new JPanel();
-    JPanel picPanel = new JPanel();
-    JPanel slideshowPanel = new JPanel();
-    JPanel vidPanel = new JPanel();
-    JPanel paintPanel = new JPanel();
+    JPanel settingsPanel = new JPanel();
+    JPanel titlePanel = new JPanel();
+    JPanel tileBackgroundPanel = new JPanel();
 
-    final Color settingsC = Color.BLACK;
-    final Color titleC = Color.BLUE;
-    final Color tileBackgroundC = Color.RED;
+    final Color settingsC = Color.PINK;
+    final Color titleC = Color.PINK;
+    final Color tileBackgroundC = Color.PINK;
     final Color tileC = Color.CYAN;
     final Color tileTileC = Color.YELLOW;
 
-    final int settingsV = 10;
-    final int titleV = 30;
-    final int spacerV = 15;
-    final int tileV = 40;
-    final int exitV = 25;
+    final int settingsV = 50;
+    final int titleV = 90;
+    final int spacerV = 30;
+    final int tileV = 80;
+    final int exitV = 55;
 
     final int spacerH = 50;
-    final int tileH = 40;
-    final int midH = 20;
-    final int fileSQ = 5;
+    final int tileH = 140;
+    final int midH = 40;
+    final int fileSQ = 20;
 
-    final int windowWidth = 600;
-    final int windowHeight = 400;
+    final int windowWidth = spacerH + tileH + midH + tileH + spacerH;
+    final int windowHeight = settingsV + titleV + spacerV + tileV + spacerV + tileV + spacerV + exitV + spacerV;
     final int windowBottomBuffer = 150;
 
     private PiBoard (){
@@ -51,33 +48,31 @@ public class PiBoard {
         int boardX = (int) ((dimension.getWidth() - windowWidth - windowBottomBuffer));
         int boardY = (int) ((dimension.getHeight() - windowHeight - windowBottomBuffer));
 
-        label.setBounds(0, 0, 100, 50);
-        label.setFont(new Font(null, Font.PLAIN, 25));
-
         JLabel boardOnLabel = new JLabel("board");
         JLabel serverOnLabel = new JLabel("server");
-        JButton offLabel = new JButton("Turn Off");
-        JButton picLabel = new JButton("Picture");
-        JButton slideshowLabel = new JButton("Slideshow");
-        JButton vidLabel = new JButton("Video");
-        JButton paintLabel = new JButton("Paint");
 
-        offLabel.setBorderPainted(false);
-        picLabel.setBorderPainted(false);
-        slideshowLabel.setBorderPainted(false);
-        vidLabel.setBorderPainted(false);
-        paintLabel.setBorderPainted(false);
-
-        addStateChangerListener(offLabel, "off");
-        addStateChangerListener(picLabel, "staticPicture");
-        addStateChangerListener(slideshowLabel, "slideshow");
-        addStateChangerListener(vidLabel, "vid");
-        addStateChangerListener(paintLabel, "paint");
+        JButton offButton = new JButton("Turn Off");
+        JButton picButton = new JButton("Picture");
+        JButton slideshowButton = new JButton("Slideshow");
+        JButton vidButton = new JButton("Video");
+        JButton paintButton = new JButton("Paint");
 
         JButton pushPic = new JButton("push pic");
         JButton pushSlide = new JButton("push slide");
         JButton pushVid = new JButton("push video");
         JButton clearSlides = new JButton("clear slides");
+
+        offButton.setBorderPainted(false);
+        picButton.setBorderPainted(false);
+        slideshowButton.setBorderPainted(false);
+        vidButton.setBorderPainted(false);
+        paintButton.setBorderPainted(false);
+
+        addStateChangerListener(offButton, "off");
+        addStateChangerListener(picButton, "staticPicture");
+        addStateChangerListener(slideshowButton, "slideshow");
+        addStateChangerListener(vidButton, "vid");
+        addStateChangerListener(paintButton, "paint");
 
         pushPic.addActionListener(new ActionListener() {
             @Override
@@ -104,39 +99,58 @@ public class PiBoard {
             }
         });
 
-        //serverOnlinePanel.add(button);
+        //This is for some online checking things
         serverOnlinePanel.setBackground(Color.RED);
         boardOnlinePanel.setBackground(Color.RED);
-
         serverOnlinePanel.add(serverOnLabel);
         boardOnlinePanel.add(boardOnLabel);
-        offPanel.add(offLabel);
-        picPanel.add(picLabel);
-        vidPanel.add(vidLabel);
-        slideshowPanel.add(slideshowLabel);
-        paintPanel.add(paintLabel);
 
+        settingsPanel.setBounds(0, 0, windowWidth, settingsV);
+        titlePanel.setBounds(0, settingsV, windowWidth, titleV);
+        tileBackgroundPanel.setBounds(0, settingsV + titleV, windowWidth, windowHeight - settingsV - titleV);
+        settingsPanel.setBackground(settingsC);
+        titlePanel.setBackground(titleC);
+        tileBackgroundPanel.setBackground(tileBackgroundC);
 
-        frame.add(label);
+        picButton.setBounds(spacerH, settingsV + titleV + spacerV, tileH, tileV);
+        slideshowButton.setBounds(spacerH + tileH + midH, settingsV + titleV + spacerV, tileH, tileV);
+        vidButton.setBounds(spacerH, settingsV + titleV + spacerV + tileV + spacerV, tileH, tileV);
+        paintButton.setBounds(spacerH + tileH + midH, settingsV + titleV + spacerV + tileV + spacerV, tileH, tileV);
+        offButton.setBounds(spacerH, settingsV + titleV + spacerV + tileV + spacerV + tileV + spacerV, tileH + tileH + midH, exitV);
+
+        pushPic.setBounds(spacerH + tileH - fileSQ, settingsV + titleV + spacerV, fileSQ, fileSQ);
+        pushSlide.setBounds(spacerH + tileH + midH + tileH - fileSQ, settingsV + titleV + spacerV, fileSQ, fileSQ);
+        pushVid.setBounds(spacerH + tileH - fileSQ, settingsV + titleV + spacerV + tileV + spacerV, fileSQ, fileSQ);
+
         frame.add(serverOnlinePanel);
         frame.add(boardOnlinePanel);
-        frame.add(offPanel);
-        frame.add(picPanel);
-        frame.add(slideshowPanel);
-        frame.add(vidPanel);
-        frame.add(paintPanel);
 
         frame.add(pushPic);
         frame.add(pushSlide);
         frame.add(pushVid);
-        frame.add(clearSlides);
 
+        frame.add(picButton);
+        frame.add(slideshowButton);
+        frame.add(vidButton);
+        frame.add(paintButton);
+        frame.add(offButton);
+
+        frame.add(settingsPanel);
+        frame.add(titlePanel);
+        frame.add(tileBackgroundPanel);
+
+        frame.setComponentZOrder(pushPic, 3);
+        frame.setComponentZOrder(pushSlide, 3);
+        frame.setComponentZOrder(pushVid, 3);
+
+
+        //frame.setUndecorated(true);
         frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-        frame.setSize(windowWidth, windowHeight);
-        frame.setLayout(new FlowLayout());
-        frame.setResizable(false);
+        frame.setSize(windowWidth + 16, windowHeight + 30);
+        frame.setLayout(null);
+        //frame.setResizable(false);
         frame.setLocation(boardX,boardY);
-        frame.setVisible(false);
+        frame.setVisible(true);
     }
 
     public String stateCheck() {
@@ -144,7 +158,7 @@ public class PiBoard {
             URL stateURL = new URL("https://rohanakki.com:1256/stateCheck");
             HttpsURLConnection urlConnection = (HttpsURLConnection) stateURL.openConnection();
             urlConnection.setRequestMethod("GET");
-            urlConnection.setConnectTimeout(3000);
+            urlConnection.setConnectTimeout(2000);
 
             int responseCode = urlConnection.getResponseCode();
             System.out.println("response code is : " + responseCode);
