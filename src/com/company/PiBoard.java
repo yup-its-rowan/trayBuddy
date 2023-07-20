@@ -23,6 +23,23 @@ public class PiBoard {
     JPanel vidPanel = new JPanel();
     JPanel paintPanel = new JPanel();
 
+    final Color settingsC = Color.BLACK;
+    final Color titleC = Color.BLUE;
+    final Color tileBackgroundC = Color.RED;
+    final Color tileC = Color.CYAN;
+    final Color tileTileC = Color.YELLOW;
+
+    final int settingsV = 10;
+    final int titleV = 30;
+    final int spacerV = 15;
+    final int tileV = 40;
+    final int exitV = 25;
+
+    final int spacerH = 50;
+    final int tileH = 40;
+    final int midH = 20;
+    final int fileSQ = 5;
+
     final int windowWidth = 600;
     final int windowHeight = 400;
     final int windowBottomBuffer = 150;
