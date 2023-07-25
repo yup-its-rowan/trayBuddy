@@ -36,7 +36,7 @@ public class Main {
         //CheckboxMenuItem cb1 = new CheckboxMenuItem("Set auto size");
         //CheckboxMenuItem cb2 = new CheckboxMenuItem("Set tooltip");
         MenuItem piBoardItem = new MenuItem("PiBoard");
-        Menu shortcutsMenu = new Menu("Shortcuts9");
+        Menu shortcutsMenu = new Menu("Shortcuts");
             MenuItem emailItem = new MenuItem("Email");
             MenuItem schoolItem = new MenuItem("School");
             MenuItem tf2Item = new MenuItem("TF2");

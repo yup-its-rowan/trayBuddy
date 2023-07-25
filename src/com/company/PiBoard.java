@@ -13,33 +13,40 @@ public class PiBoard {
     public static String password;
     public static PiBoard PiBoardSingleton = new PiBoard();
 
-    JFrame frame = new JFrame();
-    JPanel boardOnlinePanel = new JPanel();
-    JPanel serverOnlinePanel = new JPanel();
-    JPanel settingsPanel = new JPanel();
-    JPanel titlePanel = new JPanel();
-    JPanel tileBackgroundPanel = new JPanel();
+    private JFrame frame = new JFrame();
+    private JPanel boardOnlinePanel = new JPanel();
+    private JPanel serverOnlinePanel = new JPanel();
+    private JPanel bufferRightOnlinePanel = new JPanel();
+    private JPanel bufferLeftOnlinePanel = new JPanel();
+    private JPanel settingsPanel = new JPanel(new BorderLayout());
+    private JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
 
-    final Color settingsC = Color.PINK;
-    final Color titleC = Color.PINK;
-    final Color tileBackgroundC = Color.PINK;
-    final Color tileC = Color.CYAN;
-    final Color tileTileC = Color.YELLOW;
+    private FlowLayout tileBack = new FlowLayout(FlowLayout.CENTER);
+    private JPanel tileBackgroundPanel = new JPanel();
 
-    final int settingsV = 50;
-    final int titleV = 90;
-    final int spacerV = 30;
-    final int tileV = 80;
-    final int exitV = 55;
+    private final Color settingsC = Color.PINK;
+    private final Color titleBackC = Color.PINK;
+    private final Color tileBackgroundC = Color.PINK;
+    private final Color tileC = Color.PINK;
+    private final Color tileTileC = Color.YELLOW;
+    private final Color titleC = Color.BLACK;
 
-    final int spacerH = 50;
-    final int tileH = 140;
-    final int midH = 40;
-    final int fileSQ = 20;
+    private final int settingsV = 50;
+    private final int titleV = 90;
+    private final int spacerV = 30;
+    private final int tileV = 80;
+    private final int exitV = 55;
 
-    final int windowWidth = spacerH + tileH + midH + tileH + spacerH;
-    final int windowHeight = settingsV + titleV + spacerV + tileV + spacerV + tileV + spacerV + exitV + spacerV;
-    final int windowBottomBuffer = 150;
+    private final int spacerH = 50;
+    private final int tileH = 140;
+    private final int midH = 40;
+    private final int fileSQ = 20;
+
+    private final int windowWidth = spacerH + tileH + midH + tileH + spacerH;
+    private final int windowHeight = settingsV + titleV + spacerV + tileV + spacerV + tileV + spacerV + exitV + spacerV;
+    private final int windowBottomBuffer = 150;
+
+    private String videoDowngradeCheck = "true";
 
     private PiBoard (){
         password = readPasswordFile();
@@ -50,6 +57,7 @@ public class PiBoard {
 
         JLabel boardOnLabel = new JLabel("board");
         JLabel serverOnLabel = new JLabel("server");
+        JLabel titleLabel = new JLabel("PiBoard");
 
         JButton offButton = new JButton("Turn Off");
         JButton picButton = new JButton("Picture");
@@ -60,7 +68,48 @@ public class PiBoard {
         JButton pushPic = new JButton("push pic");
         JButton pushSlide = new JButton("push slide");
         JButton pushVid = new JButton("push video");
-        JButton clearSlides = new JButton("clear slides");
+
+        JButton optionsMenu = new JButton("?");
+        optionsMenu.setPreferredSize(new Dimension(fileSQ, fileSQ));
+
+        JPopupMenu optionsMenuFull = new JPopupMenu("Settings");
+            JMenuItem slideClearingItem = new JMenuItem("Clear Slides");
+            JCheckBoxMenuItem downgradeVideoItem = new JCheckBoxMenuItem("Downgrade Video?");
+            downgradeVideoItem.setState(true);
+        optionsMenuFull.add(slideClearingItem);
+        optionsMenuFull.add(downgradeVideoItem);
+
+        slideClearingItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("clear slides");
+                clearSlides();
+            }
+        });
+        downgradeVideoItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("downgrade video");
+                if (downgradeVideoItem.getState() == true){
+                    videoDowngradeCheck = "true";
+                } else {
+                    videoDowngradeCheck = "false";
+                }
+            }
+        });
+        optionsMenu.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("got to optionMenu");
+                showPopup(e, optionsMenuFull);
+            }
+        });
+
+        offButton.setBackground(tileC);
+        picButton.setBackground(tileC);
+        slideshowButton.setBackground(tileC);
+        vidButton.setBackground(tileC);
+        paintButton.setBackground(tileC);
 
         offButton.setBorderPainted(false);
         picButton.setBorderPainted(false);
@@ -92,63 +141,103 @@ public class PiBoard {
                 pushVideo();
             }
         });
-        clearSlides.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                clearSlides();
-            }
-        });
 
         //This is for some online checking things
+        bufferRightOnlinePanel.setBackground(settingsC);
+        bufferRightOnlinePanel.setPreferredSize(new Dimension(10, 5));
+        bufferLeftOnlinePanel.setBackground(settingsC);
+        bufferLeftOnlinePanel.setPreferredSize(new Dimension(10, 5));
+
         serverOnlinePanel.setBackground(Color.RED);
         boardOnlinePanel.setBackground(Color.RED);
         serverOnlinePanel.add(serverOnLabel);
         boardOnlinePanel.add(boardOnLabel);
 
-        settingsPanel.setBounds(0, 0, windowWidth, settingsV);
-        titlePanel.setBounds(0, settingsV, windowWidth, titleV);
-        tileBackgroundPanel.setBounds(0, settingsV + titleV, windowWidth, windowHeight - settingsV - titleV);
+        settingsPanel.setPreferredSize(new Dimension(windowWidth, settingsV));
+        //settingsPanel.setBounds(0, 0, windowWidth, settingsV);
+        titlePanel.setPreferredSize(new Dimension(windowWidth, titleV));
+        //titlePanel.setBounds(0, settingsV, windowWidth, titleV);
+        tileBack.setVgap(spacerV);
+        tileBack.setHgap(midH);
+        tileBackgroundPanel.setLayout(tileBack);
+        tileBackgroundPanel.setPreferredSize(new Dimension(windowWidth, windowHeight-settingsV-tileV));
+        //tileBackgroundPanel.setBounds(0, settingsV + titleV, windowWidth, windowHeight - settingsV - titleV);
         settingsPanel.setBackground(settingsC);
-        titlePanel.setBackground(titleC);
+        titlePanel.setBackground(titleBackC);
         tileBackgroundPanel.setBackground(tileBackgroundC);
 
-        picButton.setBounds(spacerH, settingsV + titleV + spacerV, tileH, tileV);
-        slideshowButton.setBounds(spacerH + tileH + midH, settingsV + titleV + spacerV, tileH, tileV);
-        vidButton.setBounds(spacerH, settingsV + titleV + spacerV + tileV + spacerV, tileH, tileV);
-        paintButton.setBounds(spacerH + tileH + midH, settingsV + titleV + spacerV + tileV + spacerV, tileH, tileV);
-        offButton.setBounds(spacerH, settingsV + titleV + spacerV + tileV + spacerV + tileV + spacerV, tileH + tileH + midH, exitV);
+        //picButton.setBounds(spacerH, settingsV + titleV + spacerV, tileH, tileV);
+        //slideshowButton.setBounds(spacerH + tileH + midH, settingsV + titleV + spacerV, tileH, tileV);
+        //vidButton.setBounds(spacerH, settingsV + titleV + spacerV + tileV + spacerV, tileH, tileV);
+        //paintButton.setBounds(spacerH + tileH + midH, settingsV + titleV + spacerV + tileV + spacerV, tileH, tileV);
+        //offButton.setBounds(spacerH, settingsV + titleV + spacerV + tileV + spacerV + tileV + spacerV, tileH + tileH + midH, exitV);
 
-        pushPic.setBounds(spacerH + tileH - fileSQ, settingsV + titleV + spacerV, fileSQ, fileSQ);
-        pushSlide.setBounds(spacerH + tileH + midH + tileH - fileSQ, settingsV + titleV + spacerV, fileSQ, fileSQ);
-        pushVid.setBounds(spacerH + tileH - fileSQ, settingsV + titleV + spacerV + tileV + spacerV, fileSQ, fileSQ);
+        pushPic.setBounds(tileH - fileSQ, 0, fileSQ, fileSQ);
+        pushSlide.setBounds(tileH - fileSQ, 0, fileSQ, fileSQ);
+        pushVid.setBounds(tileH - fileSQ, 0, fileSQ, fileSQ);
 
-        frame.add(serverOnlinePanel);
-        frame.add(boardOnlinePanel);
 
-        frame.add(pushPic);
-        frame.add(pushSlide);
-        frame.add(pushVid);
+        picButton.setSize(new Dimension(tileH, tileV));
+        slideshowButton.setSize(new Dimension(tileH, tileV));
+        vidButton.setSize(new Dimension(tileH, tileV));
+        paintButton.setPreferredSize(new Dimension(tileH, tileV));
+        offButton.setPreferredSize(new Dimension(tileH + tileH + midH, tileV));
 
-        frame.add(picButton);
-        frame.add(slideshowButton);
-        frame.add(vidButton);
-        frame.add(paintButton);
-        frame.add(offButton);
+        //removeBorder.setHgap(0);
+        //removeBorder.setVgap(0);
+        JPanel settingsRightWrapper = new JPanel(new FlowLayout());
+        settingsRightWrapper.setBackground(settingsC);
+        settingsRightWrapper.add(serverOnlinePanel);
+        settingsRightWrapper.add(boardOnlinePanel);
+        settingsRightWrapper.add(bufferRightOnlinePanel);
+
+        JPanel settingsLeftWrapper = new JPanel(new FlowLayout());
+        settingsLeftWrapper.setBackground(settingsC);
+        settingsLeftWrapper.add(bufferLeftOnlinePanel);
+        settingsLeftWrapper.add(optionsMenu);
+
+        settingsPanel.add(settingsRightWrapper, BorderLayout.LINE_END);
+        settingsPanel.add(settingsLeftWrapper, BorderLayout.LINE_START);
+
+
+        titleLabel.setFont(new Font("Monospaced", Font.PLAIN, 50));
+        titleLabel.setBackground(titleC);
+        titlePanel.add(titleLabel);
+
+        JLayeredPane picPushPane = new JLayeredPane();
+        picPushPane.add(pushPic, JLayeredPane.POPUP_LAYER);
+        picPushPane.add(picButton, JLayeredPane.DEFAULT_LAYER);
+        picPushPane.setPreferredSize(new Dimension(tileH, tileV));
+
+        JLayeredPane slidePushPane = new JLayeredPane();
+        slidePushPane.add(pushSlide, JLayeredPane.POPUP_LAYER);
+        slidePushPane.add(slideshowButton, JLayeredPane.DEFAULT_LAYER);
+        slidePushPane.setPreferredSize(new Dimension(tileH, tileV));
+
+        JLayeredPane vidPushPane = new JLayeredPane();
+        vidPushPane.add(pushVid, JLayeredPane.POPUP_LAYER);
+        vidPushPane.add(vidButton, JLayeredPane.DEFAULT_LAYER);
+        vidPushPane.setPreferredSize(new Dimension(tileH, tileV));
+
+        tileBackgroundPanel.add(picPushPane);
+        tileBackgroundPanel.add(slidePushPane);
+        tileBackgroundPanel.add(vidPushPane);
+        tileBackgroundPanel.add(paintButton);
+        tileBackgroundPanel.add(offButton);
 
         frame.add(settingsPanel);
         frame.add(titlePanel);
         frame.add(tileBackgroundPanel);
 
-        frame.setComponentZOrder(pushPic, 3);
-        frame.setComponentZOrder(pushSlide, 3);
-        frame.setComponentZOrder(pushVid, 3);
 
-
-        //frame.setUndecorated(true);
         frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-        frame.setSize(windowWidth + 16, windowHeight + 30);
-        frame.setLayout(null);
-        //frame.setResizable(false);
+        frame.setBackground(Color.BLACK);
+        frame.setSize(windowWidth, windowHeight+48);
+        FlowLayout flowLayout = new FlowLayout();
+        flowLayout.setVgap(0);
+        flowLayout.setHgap(0);
+        frame.setLayout(flowLayout);
+        frame.setResizable(false);
         frame.setLocation(boardX,boardY);
         frame.setVisible(true);
     }
@@ -255,6 +344,11 @@ public class PiBoard {
             dialog.setVisible(true);
             String file = dialog.getDirectory() + dialog.getFile();
 
+            if (dialog.getFile() == null){
+                System.out.println("its null");
+                dialog.dispose();
+                return;
+            }
             dialog.dispose();
             System.out.println(file + " chosen.");
 
@@ -281,6 +375,12 @@ public class PiBoard {
             dialog.setMode(FileDialog.LOAD);
             dialog.setVisible(true);
             String file = dialog.getDirectory() + dialog.getFile();
+
+            if (dialog.getFile() == null){
+                System.out.println("its null");
+                dialog.dispose();
+                return;
+            }
 
             dialog.dispose();
             System.out.println(file + " chosen.");
@@ -309,6 +409,12 @@ public class PiBoard {
             dialog.setVisible(true);
             String file = dialog.getDirectory() + dialog.getFile();
 
+            if (dialog.getFile() == null){
+                System.out.println("its null");
+                dialog.dispose();
+                return;
+            }
+
             dialog.dispose();
             System.out.println(file + " chosen.");
 
@@ -317,7 +423,7 @@ public class PiBoard {
             HttpPostMultipart multipart = new HttpPostMultipart("https://rohanakki.com:1256/uploadVid", "utf-8", headers);
             // Add form field
             multipart.addFormField("pass", password);
-            multipart.addFormField("videoDowngrade", "true");
+            multipart.addFormField("videoDowngrade", videoDowngradeCheck);
             // Add file
             multipart.addFilePart("myFile", new File(file));
             // Print result
@@ -358,5 +464,25 @@ public class PiBoard {
         System.out.println(data);
         return data;
     }
+    private void showPopup(ActionEvent ae, JPopupMenu menu)
+    {
+        // Get the event source
+        Component b=(Component)ae.getSource();
 
+        // Get the location of the point 'on the screen'
+        Point p=b.getLocationOnScreen();
+
+        // Show the JPopupMenu via program
+
+        // Parameter desc
+        // ----------------
+        // this - represents current frame
+        // 0,0 is the co ordinate where the popup
+        // is shown
+        menu.show(frame,0,0);
+
+        // Now set the location of the JPopupMenu
+        // This location is relative to the screen
+        menu.setLocation(p.x,p.y+b.getHeight());
+    }
 }
