@@ -97,11 +97,12 @@ public class Main {
         //popup.add(cb1);
         //popup.add(cb2);
         //popup.addSeparator();
-        popup.add(piBoardItem);
+
         popup.add(shortcutsMenu);
         shortcutsMenu.add(emailItem);
         shortcutsMenu.add(schoolItem);
         shortcutsMenu.add(tf2Item);
+        popup.add(piBoardItem);
         popup.add(exitItem);
 
         trayIcon.setPopupMenu(popup);

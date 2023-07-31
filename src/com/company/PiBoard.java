@@ -1,5 +1,6 @@
 package com.company;
 
+import javax.imageio.ImageIO;
 import javax.net.ssl.HttpsURLConnection;
 import javax.swing.*;
 import java.awt.*;
@@ -24,26 +25,39 @@ public class PiBoard {
     private FlowLayout tileBack = new FlowLayout(FlowLayout.CENTER);
     private JPanel tileBackgroundPanel = new JPanel();
 
-    private final Color settingsC = Color.PINK;
-    private final Color titleBackC = Color.PINK;
-    private final Color tileBackgroundC = Color.PINK;
-    private final Color tileC = Color.PINK;
-    private final Color tileTileC = Color.YELLOW;
-    private final Color titleC = Color.BLACK;
+    private JLabel boardOnLabel = new JLabel("board");
+    private JLabel serverOnLabel = new JLabel("server");
+
+    private final Color settingsC = new Color(58, 56, 52);
+    private final Color titleBackC = new Color(58, 56, 52);
+    private final Color tileBackgroundC = new Color(58, 56, 52);
+    private final Color titleC = new Color(255, 219, 155);
+
+    private final Color purpleDiagonal = new Color(194, 68, 120);
+    private final Color tanDiagonal = new Color(214, 142, 78);
+    private final Color offDiagonal = new Color(239, 180, 88);
+
+    private final Color labelInactiveColor = Color.RED;
+    private final Color labelActiveColor = Color.GREEN;
+
+    private final Font titleFont = new Font("Monospaced", Font.PLAIN, 70);
+    private final Font buttonFont = new Font("Monospaced", Font.PLAIN, 15);
+    private final Font labelFont = new Font("Monospaced", Font.PLAIN, 11);
 
     private final int settingsV = 50;
     private final int titleV = 90;
     private final int spacerV = 30;
-    private final int tileV = 80;
-    private final int exitV = 55;
+    private final int tileV = 100;
+    private final int exitV = 50;
 
     private final int spacerH = 50;
     private final int tileH = 140;
-    private final int midH = 40;
-    private final int fileSQ = 20;
+    private final int midH = 30;
+    private final int fileSQ = 30;
+    private final int panelCheckW = 52;
 
     private final int windowWidth = spacerH + tileH + midH + tileH + spacerH;
-    private final int windowHeight = settingsV + titleV + spacerV + tileV + spacerV + tileV + spacerV + exitV + spacerV;
+    private final int windowHeight = settingsV + titleV + spacerV + tileV + spacerV + tileV + spacerV + exitV + spacerV + spacerV ;
     private final int windowBottomBuffer = 150;
 
     private String videoDowngradeCheck = "true";
@@ -51,12 +65,24 @@ public class PiBoard {
     private PiBoard (){
         password = readPasswordFile();
 
+        InputStream inputStream = Main.class.getResourceAsStream("/icon2.png");
+        if (inputStream == null){
+            return;
+        }
+        Image image;
+        try {
+            image = ImageIO.read(inputStream);
+        } catch (IOException e) {
+            System.out.println("bruh image broke");
+            throw new RuntimeException(e);
+        }
+
+
         Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
         int boardX = (int) ((dimension.getWidth() - windowWidth - windowBottomBuffer));
         int boardY = (int) ((dimension.getHeight() - windowHeight - windowBottomBuffer));
 
-        JLabel boardOnLabel = new JLabel("board");
-        JLabel serverOnLabel = new JLabel("server");
+
         JLabel titleLabel = new JLabel("PiBoard");
 
         JButton offButton = new JButton("Turn Off");
@@ -65,11 +91,11 @@ public class PiBoard {
         JButton vidButton = new JButton("Video");
         JButton paintButton = new JButton("Paint");
 
-        JButton pushPic = new JButton("push pic");
-        JButton pushSlide = new JButton("push slide");
-        JButton pushVid = new JButton("push video");
+        JButton pushPic = new JButton("...");
+        JButton pushSlide = new JButton("...");
+        JButton pushVid = new JButton("...");
 
-        JButton optionsMenu = new JButton("?");
+        JButton optionsMenu = new JButton("...");
         optionsMenu.setPreferredSize(new Dimension(fileSQ, fileSQ));
 
         JPopupMenu optionsMenuFull = new JPopupMenu("Settings");
@@ -105,11 +131,28 @@ public class PiBoard {
             }
         });
 
-        offButton.setBackground(tileC);
-        picButton.setBackground(tileC);
-        slideshowButton.setBackground(tileC);
-        vidButton.setBackground(tileC);
-        paintButton.setBackground(tileC);
+        optionsMenu.setFocusPainted(false);
+        pushPic.setFocusPainted(false);
+        pushVid.setFocusPainted(false);
+        pushSlide.setFocusPainted(false);
+        picButton.setFocusPainted(false);
+        vidButton.setFocusPainted(false);
+        slideshowButton.setFocusPainted(false);
+        paintButton.setFocusPainted(false);
+        offButton.setFocusPainted(false);
+
+        //offButton.setBackground(tileC);
+        picButton.setBackground(purpleDiagonal);
+        slideshowButton.setBackground(tanDiagonal);
+        vidButton.setBackground(tanDiagonal);
+        paintButton.setBackground(purpleDiagonal);
+        offButton.setBackground(offDiagonal);
+
+        picButton.setFont(buttonFont);
+        slideshowButton.setFont(buttonFont);
+        vidButton.setFont(buttonFont);
+        paintButton.setFont(buttonFont);
+        offButton.setFont(buttonFont);
 
         offButton.setBorderPainted(false);
         picButton.setBorderPainted(false);
@@ -142,14 +185,40 @@ public class PiBoard {
             }
         });
 
+        pushPic.setBackground(tileBackgroundC);
+        pushVid.setBackground(tileBackgroundC);
+        pushSlide.setBackground(tileBackgroundC);
+        optionsMenu.setBackground(tileBackgroundC);
+
+        pushPic.setForeground(titleC);
+        pushVid.setForeground(titleC);
+        pushSlide.setForeground(titleC);
+        optionsMenu.setForeground(titleC);
+
+        optionsMenu.setBorder(BorderFactory.createLineBorder(titleC));
+        pushPic.setBorder(BorderFactory.createLineBorder(purpleDiagonal));
+        pushVid.setBorder(BorderFactory.createLineBorder(tanDiagonal));
+        pushSlide.setBorder(BorderFactory.createLineBorder(tanDiagonal));
+
+
         //This is for some online checking things
         bufferRightOnlinePanel.setBackground(settingsC);
         bufferRightOnlinePanel.setPreferredSize(new Dimension(10, 5));
         bufferLeftOnlinePanel.setBackground(settingsC);
         bufferLeftOnlinePanel.setPreferredSize(new Dimension(10, 5));
 
-        serverOnlinePanel.setBackground(Color.RED);
-        boardOnlinePanel.setBackground(Color.RED);
+        serverOnLabel.setFont(labelFont);
+        boardOnLabel.setFont(labelFont);
+        serverOnLabel.setForeground(labelInactiveColor);
+        boardOnLabel.setForeground(labelInactiveColor);
+
+        serverOnlinePanel.setPreferredSize(new Dimension(panelCheckW, fileSQ));
+        boardOnlinePanel.setPreferredSize(new Dimension(panelCheckW, fileSQ));
+
+        serverOnlinePanel.setBackground(tileBackgroundC);
+        boardOnlinePanel.setBackground(tileBackgroundC);
+        serverOnlinePanel.setBorder(BorderFactory.createLineBorder(labelInactiveColor));
+        boardOnlinePanel.setBorder(BorderFactory.createLineBorder(labelInactiveColor));
         serverOnlinePanel.add(serverOnLabel);
         boardOnlinePanel.add(boardOnLabel);
 
@@ -166,25 +235,16 @@ public class PiBoard {
         titlePanel.setBackground(titleBackC);
         tileBackgroundPanel.setBackground(tileBackgroundC);
 
-        //picButton.setBounds(spacerH, settingsV + titleV + spacerV, tileH, tileV);
-        //slideshowButton.setBounds(spacerH + tileH + midH, settingsV + titleV + spacerV, tileH, tileV);
-        //vidButton.setBounds(spacerH, settingsV + titleV + spacerV + tileV + spacerV, tileH, tileV);
-        //paintButton.setBounds(spacerH + tileH + midH, settingsV + titleV + spacerV + tileV + spacerV, tileH, tileV);
-        //offButton.setBounds(spacerH, settingsV + titleV + spacerV + tileV + spacerV + tileV + spacerV, tileH + tileH + midH, exitV);
-
         pushPic.setBounds(tileH - fileSQ, 0, fileSQ, fileSQ);
         pushSlide.setBounds(tileH - fileSQ, 0, fileSQ, fileSQ);
         pushVid.setBounds(tileH - fileSQ, 0, fileSQ, fileSQ);
-
 
         picButton.setSize(new Dimension(tileH, tileV));
         slideshowButton.setSize(new Dimension(tileH, tileV));
         vidButton.setSize(new Dimension(tileH, tileV));
         paintButton.setPreferredSize(new Dimension(tileH, tileV));
-        offButton.setPreferredSize(new Dimension(tileH + tileH + midH, tileV));
+        offButton.setPreferredSize(new Dimension(tileH + tileH + midH, exitV));
 
-        //removeBorder.setHgap(0);
-        //removeBorder.setVgap(0);
         JPanel settingsRightWrapper = new JPanel(new FlowLayout());
         settingsRightWrapper.setBackground(settingsC);
         settingsRightWrapper.add(serverOnlinePanel);
@@ -200,8 +260,8 @@ public class PiBoard {
         settingsPanel.add(settingsLeftWrapper, BorderLayout.LINE_START);
 
 
-        titleLabel.setFont(new Font("Monospaced", Font.PLAIN, 50));
-        titleLabel.setBackground(titleC);
+        titleLabel.setFont(titleFont);
+        titleLabel.setForeground(titleC);
         titlePanel.add(titleLabel);
 
         JLayeredPane picPushPane = new JLayeredPane();
@@ -232,13 +292,14 @@ public class PiBoard {
 
         frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         frame.setBackground(Color.BLACK);
-        frame.setSize(windowWidth, windowHeight+48);
+        frame.setSize(windowWidth, windowHeight);
         FlowLayout flowLayout = new FlowLayout();
         flowLayout.setVgap(0);
         flowLayout.setHgap(0);
         frame.setLayout(flowLayout);
         frame.setResizable(false);
         frame.setLocation(boardX,boardY);
+        frame.setIconImage(image);
         frame.setVisible(true);
     }
 
@@ -254,15 +315,24 @@ public class PiBoard {
 
             if (responseCode == HttpsURLConnection.HTTP_OK){
                 System.out.println("both up");
-                boardOnlinePanel.setBackground(Color.GREEN);
-                serverOnlinePanel.setBackground(Color.GREEN);
+                serverOnLabel.setForeground(labelActiveColor);
+                boardOnLabel.setForeground(labelActiveColor);
+                serverOnlinePanel.setBorder(BorderFactory.createLineBorder(labelActiveColor));
+                boardOnlinePanel.setBorder(BorderFactory.createLineBorder(labelActiveColor));
                 return "both up";
             } else if ( responseCode == HttpsURLConnection.HTTP_UNAVAILABLE){
                 System.out.println("server up");
-                serverOnlinePanel.setBackground(Color.GREEN);
+                serverOnLabel.setForeground(labelActiveColor);
+                boardOnLabel.setForeground(labelInactiveColor);
+                serverOnlinePanel.setBorder(BorderFactory.createLineBorder(labelActiveColor));
+                boardOnlinePanel.setBorder(BorderFactory.createLineBorder(labelInactiveColor));
                 return "server up";
             } else {
                 System.out.println("this should never happen");
+                serverOnLabel.setForeground(labelInactiveColor);
+                boardOnLabel.setForeground(labelInactiveColor);
+                serverOnlinePanel.setBorder(BorderFactory.createLineBorder(labelInactiveColor));
+                boardOnlinePanel.setBorder(BorderFactory.createLineBorder(labelInactiveColor));
                 return "how did you get here???";
             }
 
@@ -451,7 +521,7 @@ public class PiBoard {
     private String readPasswordFile(){
         String data = "oopsy";
         try {
-            URL url = getClass().getResource("pass.txt");
+            URL url = getClass().getResource("/pass.txt");
             File file = new File(url.getPath());
             Scanner myReader = new Scanner(file);
             data = myReader.nextLine();
@@ -477,7 +547,7 @@ public class PiBoard {
         // Parameter desc
         // ----------------
         // this - represents current frame
-        // 0,0 is the co ordinate where the popup
+        // 0,0 is the coordinate where the popup
         // is shown
         menu.show(frame,0,0);
 
