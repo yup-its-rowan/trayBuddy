@@ -520,17 +520,11 @@ public class PiBoard {
     }
     private String readPasswordFile(){
         String data = "oopsy";
-        try {
-            URL url = getClass().getResource("/pass.txt");
-            File file = new File(url.getPath());
-            Scanner myReader = new Scanner(file);
-            data = myReader.nextLine();
+        InputStream inputStream = Main.class.getResourceAsStream("/pass.txt");
+        Scanner myReader = new Scanner(inputStream);
+        data = myReader.nextLine();
 
-            myReader.close();
-        } catch (FileNotFoundException e) {
-            System.out.println("An error occurred.");
-            e.printStackTrace();
-        }
+        myReader.close();
         System.out.println(data);
         return data;
     }
