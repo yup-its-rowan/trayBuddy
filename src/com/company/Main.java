@@ -50,14 +50,14 @@ public class Main {
             try {
                 desktop.browse(new URI("https://mail.google.com/mail/u/0/#inbox"));
                 desktop.browse(new URI("https://mail.yahoo.com/d/folders/1"));
-                desktop.browse(new URI("https://outlook.office365.com/mail/"));
+                //desktop.browse(new URI("https://outlook.office365.com/mail/"));
             } catch (IOException | URISyntaxException ioException) {
                 ioException.printStackTrace();
             }
 
         };
         emailItem.addActionListener(emailListener);
-
+/*
         ActionListener schoolListener = e -> {
             try {
                 desktop.browse(new URI("https://sakai.unc.edu/portal/site/1002d5b2-6fae-498d-981c-ec89bd586fc2"));
@@ -67,6 +67,8 @@ public class Main {
             }
         };
         schoolItem.addActionListener(schoolListener);
+
+ */
 
         ActionListener tf2Listener = e -> {
             /*
