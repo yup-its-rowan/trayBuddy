@@ -26,7 +26,7 @@ public class Main {
         }
         Image image = ImageIO.read(inputStream);
         final PopupMenu popup = new PopupMenu();
-        final TrayIcon trayIcon = new TrayIcon(image);
+        final TrayIcon trayIcon = new TrayIcon(image, "traybuddy");
         final SystemTray tray = SystemTray.getSystemTray();
         trayIcon.setImageAutoSize(true);
         Desktop desktop = Desktop.getDesktop();

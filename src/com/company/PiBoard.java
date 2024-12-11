@@ -506,6 +506,7 @@ public class PiBoard {
 
     public void show(){
         this.frame.setVisible(true);
+        this.frame.repaint();
         stateCheck();
         //startState("off");
     }
