@@ -303,6 +303,10 @@ public class PiBoard {
         frame.setVisible(true);
     }
 
+    public void exit(){
+        frame.dispose();
+    }
+
     public String stateCheck() {
         try {
             URL stateURL = new URL("https://rohanakki.com:1256/stateCheck");

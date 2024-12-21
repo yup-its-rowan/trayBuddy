@@ -11,6 +11,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 import static com.company.PiBoard.PiBoardSingleton;
+import static com.company.MidiKeyboard.MidiKeyboardSingleton;
 
 public class Main {
 
@@ -79,8 +80,13 @@ public class Main {
         };
         piBoardItem.addActionListener(piBoardItemListener);
 
-        //mess with menu items
-        ActionListener exitListener = e -> tray.remove(trayIcon);
+        //exit listener and stuff
+        ActionListener exitListener = e -> {
+            PiBoardSingleton.exit();
+            MidiKeyboardSingleton.close();
+            tray.remove(trayIcon);
+            System.exit(0);
+        };
         exitItem.addActionListener(exitListener);
 
         shortcutsMenu.add(emailItem);
@@ -111,7 +117,7 @@ public class Main {
 
     public static void populateMidiInputMenu(Menu midiInputMenu, MenuItem refreshMidiInputs) {
         //System.out.println("Refreshing midi input devices");
-        MidiDevice.Info[] midiDeviceInfos = MidiKeyboard.MidiKeyboardSingleton.getListOfMidiDevices();
+        MidiDevice.Info[] midiDeviceInfos = MidiKeyboardSingleton.getListOfMidiDevices();
         midiInputMenu.removeAll();
         ArrayList<CheckboxMenuItem> midiInputs = new ArrayList<>();
         for (MidiDevice.Info info : midiDeviceInfos) {
@@ -122,7 +128,7 @@ public class Main {
             int finalI = i;
             midiInputs.get(i).addItemListener(e -> {
                 //System.out.println("Setting midi input device to " + info.getName());
-                MidiKeyboard.MidiKeyboardSingleton.setMidiDevice(midiDeviceInfos[finalI]);
+                MidiKeyboardSingleton.setMidiDevice(midiDeviceInfos[finalI]);
                 for (int j = 0; j < midiInputs.size(); j++) {
                     if (j != finalI) {
                         midiInputs.get(j).setState(false);
