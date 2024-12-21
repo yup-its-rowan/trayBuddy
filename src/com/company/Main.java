@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 
 import static com.company.PiBoard.PiBoardSingleton;
 
@@ -32,6 +33,7 @@ public class Main {
         trayIcon.setImageAutoSize(true);
         Desktop desktop = Desktop.getDesktop();
 
+        //setup for how menu should look
         Menu shortcutsMenu = new Menu("Shortcuts");
             MenuItem emailItem = new MenuItem("Email");
             MenuItem schoolItem = new MenuItem("School");
@@ -42,27 +44,20 @@ public class Main {
         MenuItem piBoardItem = new MenuItem("PiBoard");
         MenuItem exitItem = new MenuItem("Exit");
 
-
+        //email listener and stuff
         ActionListener emailListener = e -> {
             try {
                 desktop.browse(new URI("https://mail.google.com/mail/u/0/#inbox"));
                 desktop.browse(new URI("https://mail.yahoo.com/d/folders/1"));
-                //desktop.browse(new URI("https://outlook.office365.com/mail/"));
             } catch (IOException | URISyntaxException ioException) {
                 ioException.printStackTrace();
             }
 
         };
         emailItem.addActionListener(emailListener);
+
         //tf2 listener and stuff
         ActionListener tf2Listener = e -> {
-            /*
-            try {
-                Process p = Runtime.getRuntime().exec("D:\\Steam\\steamapps\\common\\Team Fortress 2\\hl2.exe");
-            } catch (IOException ioException) {
-                ioException.printStackTrace();
-            }
-             */
             try {
                 desktop.browse(new URI("https://uncletopia.com/servers"));
                 desktop.browse(new URI("steam://rungameid/440"));
@@ -74,18 +69,7 @@ public class Main {
 
         //midi input devices listener and stuff
         ActionListener refreshListener = e -> {
-            //System.out.println("Refreshing midi input devices");
-            MidiDevice.Info[] midiDeviceInfos = MidiKeyboard.MidiKeyboardSingleton.getListOfMidiDevices();
-            midiInputMenu.removeAll();
-            for (MidiDevice.Info info : midiDeviceInfos) {
-                CheckboxMenuItem midiInput = new CheckboxMenuItem(info.getName());
-                midiInput.addItemListener(i -> {
-                    //System.out.println("Setting midi input device to " + info.getName());
-                    MidiKeyboard.MidiKeyboardSingleton.setMidiDevice(info);
-                });
-                midiInputMenu.add(midiInput);
-            }
-            midiInputMenu.add(refreshMidiInputs);
+            populateMidiInputMenu(midiInputMenu, refreshMidiInputs);
         };
         refreshMidiInputs.addActionListener(refreshListener);
 
@@ -99,10 +83,6 @@ public class Main {
         ActionListener exitListener = e -> tray.remove(trayIcon);
         exitItem.addActionListener(exitListener);
 
-        //Add components to pop-up menu
-        //popup.add(aboutItem);
-        //popup.addSeparator();
-
         shortcutsMenu.add(emailItem);
         shortcutsMenu.add(schoolItem);
         shortcutsMenu.add(tf2Item);
@@ -114,6 +94,7 @@ public class Main {
         popup.add(shortcutsMenu);
         popup.add(midiMenu);
         popup.add(piBoardItem);
+        popup.addSeparator();
         popup.add(exitItem);
 
         trayIcon.setPopupMenu(popup);
@@ -123,5 +104,35 @@ public class Main {
         } catch (AWTException e) {
             System.out.println("TrayIcon could not be added.");
         }
+
+        //onStartThings
+        populateMidiInputMenu(midiInputMenu, refreshMidiInputs);
+    }
+
+    public static void populateMidiInputMenu(Menu midiInputMenu, MenuItem refreshMidiInputs) {
+        //System.out.println("Refreshing midi input devices");
+        MidiDevice.Info[] midiDeviceInfos = MidiKeyboard.MidiKeyboardSingleton.getListOfMidiDevices();
+        midiInputMenu.removeAll();
+        ArrayList<CheckboxMenuItem> midiInputs = new ArrayList<>();
+        for (MidiDevice.Info info : midiDeviceInfos) {
+            CheckboxMenuItem midiInput = new CheckboxMenuItem(info.getName());
+            midiInputs.add(midiInput);
+        }
+        for (int i = 0; i < midiInputs.size(); i++) {
+            int finalI = i;
+            midiInputs.get(i).addItemListener(e -> {
+                //System.out.println("Setting midi input device to " + info.getName());
+                MidiKeyboard.MidiKeyboardSingleton.setMidiDevice(midiDeviceInfos[finalI]);
+                for (int j = 0; j < midiInputs.size(); j++) {
+                    if (j != finalI) {
+                        midiInputs.get(j).setState(false);
+                    }
+                }
+                midiInputs.get(finalI).setState(true);
+            });
+            midiInputMenu.add(midiInputs.get(i));
+        }
+        midiInputMenu.addSeparator();
+        midiInputMenu.add(refreshMidiInputs);
     }
 }
