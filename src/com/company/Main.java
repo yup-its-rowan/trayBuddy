@@ -1,6 +1,7 @@
 package com.company;
 
 import javax.imageio.ImageIO;
+import javax.sound.midi.MidiDevice;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -31,20 +32,16 @@ public class Main {
         trayIcon.setImageAutoSize(true);
         Desktop desktop = Desktop.getDesktop();
 
-        // Create a pop-up menu components
-        //MenuItem aboutItem = new MenuItem("About");
-        //CheckboxMenuItem cb1 = new CheckboxMenuItem("Set auto size");
-        //CheckboxMenuItem cb2 = new CheckboxMenuItem("Set tooltip");
-        MenuItem piBoardItem = new MenuItem("PiBoard");
         Menu shortcutsMenu = new Menu("Shortcuts");
             MenuItem emailItem = new MenuItem("Email");
             MenuItem schoolItem = new MenuItem("School");
             MenuItem tf2Item = new MenuItem("TF2");
+        Menu midiMenu = new Menu("Midikey");
+            Menu midiInputMenu = new Menu("Input");
+                MenuItem refreshMidiInputs = new MenuItem("Refresh");
+        MenuItem piBoardItem = new MenuItem("PiBoard");
         MenuItem exitItem = new MenuItem("Exit");
 
-        //mess with menu items
-        ActionListener exitListener = e -> tray.remove(trayIcon);
-        exitItem.addActionListener(exitListener);
 
         ActionListener emailListener = e -> {
             try {
@@ -57,19 +54,7 @@ public class Main {
 
         };
         emailItem.addActionListener(emailListener);
-/*
-        ActionListener schoolListener = e -> {
-            try {
-                desktop.browse(new URI("https://sakai.unc.edu/portal/site/1002d5b2-6fae-498d-981c-ec89bd586fc2"));
-                desktop.browse(new URI("https://www.gradescope.com"));
-            } catch (IOException | URISyntaxException ioException) {
-                ioException.printStackTrace();
-            }
-        };
-        schoolItem.addActionListener(schoolListener);
-
- */
-
+        //tf2 listener and stuff
         ActionListener tf2Listener = e -> {
             /*
             try {
@@ -87,23 +72,47 @@ public class Main {
         };
         tf2Item.addActionListener(tf2Listener);
 
+        //midi input devices listener and stuff
+        ActionListener refreshListener = e -> {
+            //System.out.println("Refreshing midi input devices");
+            MidiDevice.Info[] midiDeviceInfos = MidiKeyboard.MidiKeyboardSingleton.getListOfMidiDevices();
+            midiInputMenu.removeAll();
+            for (MidiDevice.Info info : midiDeviceInfos) {
+                CheckboxMenuItem midiInput = new CheckboxMenuItem(info.getName());
+                midiInput.addItemListener(i -> {
+                    //System.out.println("Setting midi input device to " + info.getName());
+                    MidiKeyboard.MidiKeyboardSingleton.setMidiDevice(info);
+                });
+                midiInputMenu.add(midiInput);
+            }
+            midiInputMenu.add(refreshMidiInputs);
+        };
+        refreshMidiInputs.addActionListener(refreshListener);
+
+        //pi board opener and stuff
         ActionListener piBoardItemListener = e -> {
             PiBoardSingleton.show();
         };
-
         piBoardItem.addActionListener(piBoardItemListener);
+
+        //mess with menu items
+        ActionListener exitListener = e -> tray.remove(trayIcon);
+        exitItem.addActionListener(exitListener);
 
         //Add components to pop-up menu
         //popup.add(aboutItem);
         //popup.addSeparator();
-        //popup.add(cb1);
-        //popup.add(cb2);
-        //popup.addSeparator();
 
-        popup.add(shortcutsMenu);
         shortcutsMenu.add(emailItem);
         shortcutsMenu.add(schoolItem);
         shortcutsMenu.add(tf2Item);
+
+        midiInputMenu.add(refreshMidiInputs);
+
+        midiMenu.add(midiInputMenu);
+
+        popup.add(shortcutsMenu);
+        popup.add(midiMenu);
         popup.add(piBoardItem);
         popup.add(exitItem);
 
