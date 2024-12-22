@@ -1,4 +1,5 @@
-package com.company;
+package com.company.MidiKey;
+
 import javax.sound.midi.*;
 
 public class MidiKeyboard {
@@ -22,7 +23,6 @@ public class MidiKeyboard {
     public void setMidiDevice(MidiDevice.Info info) {
         try {
             inputDevice = MidiSystem.getMidiDevice(info);
-            inputDevice.open();
             //System.out.println(info.getName() + " opened");
         } catch (MidiUnavailableException e) {
             e.printStackTrace();
@@ -30,15 +30,21 @@ public class MidiKeyboard {
         }
     }
 
-    public static void play() throws MidiUnavailableException {
+    public static boolean play() throws MidiUnavailableException {
+        if (inputDevice == null) {
+            System.out.println("No midi device selected");
+            return false;
+        }
+        inputDevice.open();
+
         mainSequencer = MidiSystem.getSequencer();
         mainSequencer.open();
 
         Transmitter transmitter = inputDevice.getTransmitter();
-        Receiver receiver = mainSequencer.getReceiver();
+        Receiver receiver = new RealTimeReceiver();
         transmitter.setReceiver(receiver);
 
-
+        return true;
     }
 
     public static void close() {

@@ -1,5 +1,7 @@
 package com.company;
 
+import com.company.MidiKey.MidiKeyboard;
+
 import javax.imageio.ImageIO;
 import javax.sound.midi.MidiDevice;
 import java.awt.*;
@@ -11,7 +13,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 import static com.company.PiBoard.PiBoardSingleton;
-import static com.company.MidiKeyboard.MidiKeyboardSingleton;
+import static com.company.MidiKey.MidiKeyboard.MidiKeyboardSingleton;
 
 public class Main {
 
@@ -42,6 +44,7 @@ public class Main {
         Menu midiMenu = new Menu("Midikey");
             Menu midiInputMenu = new Menu("Input");
                 MenuItem refreshMidiInputs = new MenuItem("Refresh");
+            CheckboxMenuItem playMidiKeyboardItem = new CheckboxMenuItem("Play", false);
         MenuItem piBoardItem = new MenuItem("PiBoard");
         MenuItem exitItem = new MenuItem("Exit");
 
@@ -70,9 +73,24 @@ public class Main {
 
         //midi input devices listener and stuff
         ActionListener refreshListener = e -> {
-            populateMidiInputMenu(midiInputMenu, refreshMidiInputs);
+            populateMidiInputMenu(midiInputMenu, refreshMidiInputs, playMidiKeyboardItem);
         };
         refreshMidiInputs.addActionListener(refreshListener);
+        playMidiKeyboardItem.addItemListener(e -> {
+            if (playMidiKeyboardItem.getState()) {
+                try {
+                    boolean worked = MidiKeyboard.play();
+                    if (!worked) {
+                        playMidiKeyboardItem.setState(false);
+                    }
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                }
+            } else {
+                MidiKeyboardSingleton.close();
+            }
+            System.out.println("Play midi keyboard item state: " + playMidiKeyboardItem.getState());
+        });
 
         //pi board opener and stuff
         ActionListener piBoardItemListener = e -> {
@@ -96,6 +114,7 @@ public class Main {
         midiInputMenu.add(refreshMidiInputs);
 
         midiMenu.add(midiInputMenu);
+        midiMenu.add(playMidiKeyboardItem);
 
         popup.add(shortcutsMenu);
         popup.add(midiMenu);
@@ -112,10 +131,10 @@ public class Main {
         }
 
         //onStartThings
-        populateMidiInputMenu(midiInputMenu, refreshMidiInputs);
+        populateMidiInputMenu(midiInputMenu, refreshMidiInputs, playMidiKeyboardItem);
     }
 
-    public static void populateMidiInputMenu(Menu midiInputMenu, MenuItem refreshMidiInputs) {
+    public static void populateMidiInputMenu(Menu midiInputMenu, MenuItem refreshMidiInputs, CheckboxMenuItem playMidiKeyboardItem) {
         //System.out.println("Refreshing midi input devices");
         MidiDevice.Info[] midiDeviceInfos = MidiKeyboardSingleton.getListOfMidiDevices();
         midiInputMenu.removeAll();
@@ -135,6 +154,8 @@ public class Main {
                     }
                 }
                 midiInputs.get(finalI).setState(true);
+                MidiKeyboardSingleton.close(); //close the old one before opening the new one on play
+                playMidiKeyboardItem.setState(false);
             });
             midiInputMenu.add(midiInputs.get(i));
         }
