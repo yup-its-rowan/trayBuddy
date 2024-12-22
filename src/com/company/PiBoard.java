@@ -14,7 +14,7 @@ public class PiBoard {
     public static String password;
     public static PiBoard PiBoardSingleton = new PiBoard();
 
-    private JFrame frame = new JFrame();
+    private JFrame frame = new JFrame("PiBoard");
     private JPanel boardOnlinePanel = new JPanel();
     private JPanel serverOnlinePanel = new JPanel();
     private JPanel bufferRightOnlinePanel = new JPanel();

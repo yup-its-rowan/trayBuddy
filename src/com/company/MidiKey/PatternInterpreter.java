@@ -82,16 +82,17 @@ public class PatternInterpreter {
     private void foundPattern(byte value) {
         System.out.println("Pattern " + value + " found");
         if (value == 1) {
-            //showFreddy();
+            showFreddy();
         }
     }
 
     private void showFreddy() {
         System.out.println("HarHarhar...");
-        InputStream freddy = Main.class.getResourceAsStream("freddy.jpg");
+
         try {
+            InputStream freddyInputStream = Main.class.getResourceAsStream("/freddy.jpg");
+            BufferedImage freddyImage = ImageIO.read(freddyInputStream);
             File freddyFile = File.createTempFile("fredddy", ".jpg");
-            BufferedImage freddyImage = ImageIO.read(freddy);
             ImageIO.write(freddyImage, "jpg", freddyFile);
             Desktop desktop = Desktop.getDesktop();
             desktop.open(freddyFile);
