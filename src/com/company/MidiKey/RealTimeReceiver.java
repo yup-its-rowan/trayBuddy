@@ -1,12 +1,11 @@
 package com.company.MidiKey;
 
-import javax.sound.midi.MidiMessage;
-import javax.sound.midi.Receiver;
-import javax.sound.midi.ShortMessage;
+import javax.sound.midi.*;
 
 import static com.company.MidiKey.PatternInterpreter.PatternInterpreterSingleton;
 
 public class RealTimeReceiver implements Receiver {
+    Synthesizer synthesizer;
     @Override
     public void send(MidiMessage message, long timeStamp) {
         if (message instanceof ShortMessage shortMessage) {
@@ -15,6 +14,15 @@ public class RealTimeReceiver implements Receiver {
             int data1 = shortMessage.getData1();
             int data2 = shortMessage.getData2();
             MIDIinterpreter(command, channel, data1, data2);
+        }
+    }
+    public RealTimeReceiver () {
+        System.out.println("Receiver created");
+        try {
+            synthesizer = MidiSystem.getSynthesizer();
+            synthesizer.open();
+        } catch (MidiUnavailableException e) {
+            e.printStackTrace();
         }
     }
 
@@ -27,9 +35,11 @@ public class RealTimeReceiver implements Receiver {
         //System.out.println("Command: " + command + " Channel: " + channel + " Key: " + key + " Velocity: " + velocity);
         if (command == ShortMessage.NOTE_ON) {
             System.out.println("Note " + key + " on at " + velocity);
+            synthesizer.getChannels()[0].noteOn(key, velocity);
             PatternInterpreterSingleton.interpretNote(key);
         } else if (command == ShortMessage.NOTE_OFF) {
             System.out.println("Note " + key + " off");
+            synthesizer.getChannels()[0].noteOff(key);
         }
     }
 }
