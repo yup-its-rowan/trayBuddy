@@ -14,7 +14,7 @@ public class RealTimeReceiver implements Receiver {
             int channel = shortMessage.getChannel();
             int data1 = shortMessage.getData1();
             int data2 = shortMessage.getData2();
-            interpreter(command, channel, data1, data2);
+            MIDIinterpreter(command, channel, data1, data2);
         }
     }
 
@@ -23,7 +23,7 @@ public class RealTimeReceiver implements Receiver {
         System.out.println("Receiver closed");
     }
 
-    public void interpreter(int command, int channel, int key, int velocity) {
+    public void MIDIinterpreter(int command, int channel, int key, int velocity) {
         //System.out.println("Command: " + command + " Channel: " + channel + " Key: " + key + " Velocity: " + velocity);
         if (command == ShortMessage.NOTE_ON) {
             System.out.println("Note " + key + " on at " + velocity);

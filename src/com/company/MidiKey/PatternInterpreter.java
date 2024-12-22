@@ -1,17 +1,12 @@
 package com.company.MidiKey;
 
-import com.company.Main;
-
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
+
 
 public class PatternInterpreter {
     private Node root;
@@ -88,17 +83,8 @@ public class PatternInterpreter {
 
     private void showFreddy() {
         System.out.println("HarHarhar...");
-
-        try {
-            InputStream freddyInputStream = Main.class.getResourceAsStream("/freddy.jpg");
-            BufferedImage freddyImage = ImageIO.read(freddyInputStream);
-            File freddyFile = File.createTempFile("fredddy", ".jpg");
-            ImageIO.write(freddyImage, "jpg", freddyFile);
-            Desktop desktop = Desktop.getDesktop();
-            desktop.open(freddyFile);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        FreddyPopup freddyPopup = new FreddyPopup();
+        freddyPopup.showPopup();
     }
 
     private static void copyInputStreamToFile(InputStream inputStream, File file) {
